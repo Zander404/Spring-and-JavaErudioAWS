@@ -1,9 +1,12 @@
 package com.zander404.springandjavaerudio.services;
 
 import com.zander404.springandjavaerudio.entities.Person;
+import com.zander404.springandjavaerudio.exceptions.PersonNotFound;
+import com.zander404.springandjavaerudio.repository.PersonRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
@@ -13,68 +16,51 @@ public class PersonServices {
     private final AtomicLong counter = new AtomicLong();
     private Logger logger = Logger.getLogger(PersonServices.class.getName());
 
+    @Autowired
+    private PersonRepository repository;
 
     public List<Person> findAll() {
-        List<Person> persons = new ArrayList<>();
+        logger.info("Find all persons");
 
-        for (int i = 0; i < 10; i++) {
-            Person person = mockPerson(Long.parseLong(String.valueOf(i)));
-            persons.add(person);
-        }
-
-        return persons;
+        return repository.findAll();
     }
 
-    public Person findById(String id) {
+
+    @Transactional
+    public Person findById(Long id) {
 
         logger.info("Finding One Person");
+        return repository.findById(id).orElseThrow(() -> new PersonNotFound("Person with this ID not found!"));
 
-        Person person = new Person();
-
-        person.setId(counter.incrementAndGet());
-        person.setFirstName("Leadro");
-        person.setLastName("Marcos");
-        person.setAddress("San Francisco, CA");
-        person.setGender("M");
-
-
-        return person;
-
-    }
-
-
-    public Person mockPerson(Long i) {
-        Person person = new Person();
-        person.setId(i);
-
-        person.setFirstName("Person Name: " + i);
-        person.setLastName("Last Name: " + i);
-        person.setAddress("Address: " + i);
-        person.setGender("Male");
-        return person;
     }
 
 
     public Person create(Person person) {
         logger.info("Creating Person");
-        return new Person(counter.incrementAndGet(),
-                person.getFirstName(),
-                person.getLastName(),
-                person.getAddress(),
-                person.getGender());
+        return repository.save(person);
     }
 
-    public Person update(String id, Person person) {
+    public Person update(Long id, Person person) {
         logger.info("Updating Person");
-        System.out.println(id);
-        System.out.println(person);
+        Person oldObj = findById(id);
+        updateInfo(person, oldObj);
 
+        repository.save(oldObj);
         return person;
     }
 
-    public Person delete(String id) {
+    public Person delete(Long id) {
         logger.info("Deleting Person");
-        System.out.println(id);
+        repository.deleteById(id);
         return null;
+    }
+
+
+    public void updateInfo(Person newObj, Person oldObj){
+
+        oldObj.setFirstName(newObj.getFirstName());
+        oldObj.setLastName(newObj.getLastName());
+        oldObj.setAddress(newObj.getAddress());
+        oldObj.setGender(newObj.getGender());
     }
 }

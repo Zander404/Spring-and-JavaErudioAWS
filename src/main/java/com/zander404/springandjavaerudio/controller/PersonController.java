@@ -23,10 +23,8 @@ public class PersonController {
 
     }
 
-
-
     @GetMapping("/{id}")
-    public Person getPersonById(@PathVariable("id") String id){
+    public Person getPersonById(@PathVariable("id") Long id){
         return service.findById(id);
 
     }
@@ -37,12 +35,13 @@ public class PersonController {
     }
 
     @PutMapping("/{id}")
-    public Person updatePerson(@PathParam(value = "id") String id, @RequestBody Person person){
+    public Person updatePerson(@PathVariable(value = "id") Long id, @RequestBody Person person){
+        System.out.println(id);
         return service.update(id, person);
     }
 
     @DeleteMapping("/{id}")
-    public Person deletePerson(@PathParam(value = "id") String id){
+    public Person deletePerson(@PathVariable(value = "id") Long id){
         return service.delete(id);
     }
 
