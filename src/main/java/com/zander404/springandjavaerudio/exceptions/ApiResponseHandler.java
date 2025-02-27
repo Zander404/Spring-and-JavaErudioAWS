@@ -30,7 +30,7 @@ public class ApiResponseHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(PersonNotFound.class)
+    @ExceptionHandler({PersonNotFound.class, BookNotFoundException.class})
     public final ResponseEntity<ExceptionResponse> handleNotFound(Exception ex, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 new Date(), ex.getMessage(), request.getDescription(false)

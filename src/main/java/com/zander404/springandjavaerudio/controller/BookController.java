@@ -1,7 +1,7 @@
 package com.zander404.springandjavaerudio.controller;
 
-import com.zander404.springandjavaerudio.entities.dto.PersonDTO;
-import com.zander404.springandjavaerudio.services.PersonServices;
+import com.zander404.springandjavaerudio.entities.dto.BookDTO;
+import com.zander404.springandjavaerudio.services.BookServices;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,47 +15,26 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/person")
-@Tag(name = "People", description = "Endpoints to Make the CRUD Operations of People Object")
-public class PersonController {
+@RequestMapping("api/v1/book")
+@Tag(name = "Books", description = "EndPoints to MAKE CRUD to Book ENTITY")
+public class BookController {
+
 
     @Autowired
-    private PersonServices service;
-
+    private BookServices services;
 
     @GetMapping(value = "/",
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "application/x-yaml"})
-    @Operation(
-            summary = "Finds all People", description = "Find All People",
-            responses = {
-                    @ApiResponse(
-                            description = "SUCCESS", responseCode = "200",
-                            content = {
-                                    @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PersonDTO.class)))
-                            }
-                    ),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content)
-            })
-    public List<PersonDTO> getAllPersons() {
-        return service.findAll();
-
-    }
-
-    @GetMapping(value = "/{id}",
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "application/x-yaml"}
     )
     @Operation(
-            summary = "GET ONE PERSON",
-            description = "GET ONE PERSON",
+            summary = "GET ALL BOOKS",
+            description = "GET ALL BOOKS",
 
             responses = {
                     @ApiResponse(
                             description = "SUCCESS", responseCode = "200",
                             content = {
-                                    @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PersonDTO.class)))
+                                    @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = BookDTO.class)))
                             }
                     ),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -64,18 +43,43 @@ public class PersonController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content)
             }
     )
-    public PersonDTO getPersonById(@PathVariable("id") Long id) {
-        return service.findById(id);
-
+    public List<BookDTO> findAll() {
+        return services.getAllBooks();
     }
+
+    @GetMapping(value = "/{id}",
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "application/x-yaml"}
+    )
+    @Operation(
+            summary = "GET ONE BOOK",
+            description = "GET ONE BOOK",
+
+            responses = {
+                    @ApiResponse(
+                            description = "SUCCESS", responseCode = "200",
+                            content = {
+                                    @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = BookDTO.class)))
+                            }
+                    ),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content)
+            }
+    )
+    public BookDTO findById(@PathVariable Long id) {
+        return services.getBookById(id);
+    }
+
+
 
     @PostMapping(value = "/",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "application/x-yaml"}
     )
     @Operation(
-            summary = "CREATE PERSON",
-            description = "CREATE PERSON",
+            summary = "CREATE BOOK",
+            description = "CREATE BOOK",
 
             responses = {
                     @ApiResponse(description = "SUCCESS", responseCode = "204", content = @Content),
@@ -85,23 +89,25 @@ public class PersonController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content)
             }
     )
-    public PersonDTO createPerson(@RequestBody PersonDTO person) {
-        return service.create(person);
+    public BookDTO create(@RequestBody BookDTO bookDTO) {
+        return services.createBook(bookDTO);
     }
+
+
 
     @PutMapping(value = "/{id}",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "application/x-yaml"}
     )
     @Operation(
-            summary = "UPDATE ONE PERSON",
-            description = "UPDATE ONE PERSON",
+            summary = "UPDATE ONE BOOK",
+            description = "UPDATE ONE BOOK",
 
             responses = {
                     @ApiResponse(
                             description = "SUCCESS", responseCode = "204",
                             content = {
-                                    @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PersonDTO.class)))
+                                    @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = BookDTO.class)))
                             }
                     ),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -110,17 +116,34 @@ public class PersonController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content)
             }
     )
-    public PersonDTO updatePerson(@PathVariable(value = "id") Long id, @RequestBody PersonDTO person) {
-        System.out.println(id);
-        service.update(id, person);
-        return service.findById(id);
+    public BookDTO update(@PathVariable Long id, @RequestBody BookDTO bookDTO) {
+        return services.updateBook(id, bookDTO);
     }
+
+
 
     @DeleteMapping(value = "/{id}",
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "application/x-yaml"})
-    public String deletePerson(@PathVariable(value = "id") Long id) {
-        service.delete(id);
-        return "Deleted person with id: " + id;
-    }
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "application/x-yaml"}
+    )
+    @Operation(
+            summary = "DELETE ONE BOOK",
+            description = "DELETE ONE BOOK",
 
+            responses = {
+                    @ApiResponse(
+                            description = "SUCCESS", responseCode = "204",
+                            content = {
+                                    @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = BookDTO.class)))
+                            }
+                    ),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content)
+            }
+    )
+    public void delete(@PathVariable Long id) {
+        services.deleteBook(id);
+    }
 }
