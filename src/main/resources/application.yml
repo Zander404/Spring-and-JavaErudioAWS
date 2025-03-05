@@ -1,3 +1,6 @@
+file:
+  upload-dir: src/main/resources/media
+
 spring:
   application:
     name: "Spring-and-JavaErudio"
@@ -11,6 +14,13 @@ spring:
     hibernate:
       ddl-auto: none
 
+
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 200MB
+      max-request-size: 250MB
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -30,4 +40,5 @@ springdoc:
 
   paths-to-match: /api/**/v1/**
 
-
+cors:
+  originPatters: http://localhost:8080
